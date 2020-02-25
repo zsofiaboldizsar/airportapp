@@ -1,0 +1,21 @@
+{
+  "name": "airportapp",
+  "version": "1.0.0",
+  "description": "simple app that populates data within a given radius ordered by distance",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "watch": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "zsofia boldizsar<zsofia.boldizsar@hu.ibm.com>",
+  "license": "ISC",
+  "dependencies": {
+    "@cloudant/cloudant": "4.2.3",
+    "express": "4.17.1",
+    "ejs": "3.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "2.0.2"
+  }
+}
