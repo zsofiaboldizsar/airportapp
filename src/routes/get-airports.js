@@ -48,7 +48,7 @@ getAirportsRouter.post('/airports', async (req, res) => {
 
                 }
                 console.log(airportsWithinRad.length);
-                res.send(airportsWithinRad);
+                res.send(airportsWithinRad.sort((a,b) => a.distance - b.distance));
             });
 
     } catch (e) {
