@@ -39,4 +39,5 @@ $ npm run watch
 
 ## Credits
 
-Geographic calculations are based on the code presented in [Selecting points within a bounding circle](http://www.movable-type.co.uk/scripts/latlong-db.html) by [Chris Veness](http://www.movable-type.co.uk/).
+Geodesic calculations are based on the code presented in [Selecting points within a bounding circle](http://www.movable-type.co.uk/scripts/latlong-db.html) by [Chris Veness](http://www.movable-type.co.uk/), and
+[Finding Points Within a Distance of a Latitude/Longitude Using Bounding Coordinates](http://janmatuschek.de/LatitudeLongitudeBoundingCoordinates#Longitude) by [Jan Philip Matuschek](http://janmatuschek.de/Contact).

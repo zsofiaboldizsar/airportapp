@@ -1,37 +1,55 @@
 const express = require('express');
-const Cloudant = require('@cloudant/cloudant');
 
-const radiansToDegrees = require('../../src/geographic-calculations');
-const degreesToRadians = require('../../src/geographic-calculations');
+const airportDb = require('../../src/connect-to-db');
+const radiansToDegrees = require('../geodesic-calculations/radians-to-degree');
+const degreesToRadians = require('../geodesic-calculations/degrees-to-radians');
+const calculateGreatCircleDistance = require('../geodesic-calculations/calculate-great-circle-distance');
 
 const getAirportsRouter = express.Router();
 
 getAirportsRouter.post('/airports', async (req, res) => {
     try {
-        const lat = req.body.lat;
-        const lon = req.body.lon;
-        const rad = req.body.rad;
-        const R = 6371.01; // Earth's radius in km
+        const lat = parseInt(req.body.lat);
+        const lon = parseInt(req.body.lon);
+        const rad = parseInt(req.body.rad);
 
-        const maxLat = lat + radiansToDegrees(rad/R);
-        const minLat = lat - radiansToDegrees(rad/R);
-        const maxLon = lon + radiansToDegrees(Math.asin(rad/R) / Math.cos(degreesToRadians(lat)));
-        const minLon = lon - radiansToDegrees(Math.asin(rad/R) / Math.cos(degreesToRadians(lat)));
+        const R = 6371.01;
+        const r = radiansToDegrees(rad / R);
+        const deltaLon = radiansToDegrees(Math.asin(Math.sin(r) / Math.cos(degreesToRadians(lat)))); // asin(sin(r)/cos(lat))
 
-        const airportDb = Cloudant({ url: 'https://mikerhodes.cloudant.com/'})
-            .db.use('airportdb');
+        // bounding box in degrees
+        const maxLat = lat + r;
+        const minLat = lat - r;
+        const maxLon = lon + deltaLon;
+        const minLon = lon - deltaLon;
+        console.log(maxLat, minLat, maxLon, minLon);
 
-       await airportDb.search('view1', 'geo', { q: `lat:[${minLat} TO ${maxLat}] AND lon:[${minLon} TO ${maxLon}]` }, (err, result) => {
-            if (err) {
-                throw err;
-            }
+        const maxDistance = calculateGreatCircleDistance(lat, maxLat, lon, maxLon);
+        console.log('max distance: ', maxDistance);
 
-            console.log('Showing %d out of a total %d results', result.rows.length, result.total_rows);
-            for (let i = 0; i < result.rows.length; i++) {
-                console.log('Document fields: %s', result.rows[i].fields);
-            }
-           res.send(result);
-        });
+        const params = {
+            q: `lat:[${minLat} TO ${maxLat}] AND lon:[${minLon} TO ${maxLon}]`,
+            limit: 200
+        };
+        await airportDb.search('view1', 'geo', params)
+            .then(result => {
+
+                let airportsWithinRad = [];
+                console.log('Showing %d out of a total %d results', result.rows.length, result.total_rows);
+                for (let i = 0; i < result.rows.length; i++) {
+                    let airportField = result.rows[i].fields;
+                    let latInDb = airportField.lat;
+                    let lonInDb = airportField.lon;
+
+                    let distance = calculateGreatCircleDistance(lat, latInDb, lon, lonInDb);
+
+                    if (distance <= maxDistance)
+                        airportsWithinRad.push({airportField, distance});
+
+                }
+                console.log(airportsWithinRad.length);
+                res.send(airportsWithinRad);
+            });
 
     } catch (e) {
         res.status(500).json(e);
@@ -39,3 +57,5 @@ getAirportsRouter.post('/airports', async (req, res) => {
 });
 
 module.exports = getAirportsRouter;
+
+
