@@ -1,6 +1,6 @@
 const express = require('express');
 
-const airportDb = require('../../src/connect-to-db');
+const AirportDatabase = require('../db-full-search');
 const radiansToDegrees = require('../geodesic-calculations/radians-to-degree');
 const degreesToRadians = require('../geodesic-calculations/degrees-to-radians');
 const calculateGreatCircleDistance = require('../geodesic-calculations/calculate-great-circle-distance');
@@ -13,8 +13,7 @@ getAirportsRouter.post('/airports', async (req, res) => {
         const lon = parseInt(req.body.lon);
         const rad = parseInt(req.body.rad);
 
-        const R = 6371.01;
-        const r = radiansToDegrees(rad / R);
+        const r = radiansToDegrees(rad / 6371.01);
         const deltaLon = radiansToDegrees(Math.asin(Math.sin(r) / Math.cos(degreesToRadians(lat)))); // asin(sin(r)/cos(lat))
 
         // bounding box in degrees
@@ -27,29 +26,32 @@ getAirportsRouter.post('/airports', async (req, res) => {
         const maxDistance = calculateGreatCircleDistance(lat, maxLat, lon, maxLon);
         console.log('max distance: ', maxDistance);
 
+        // DB search
         const params = {
             q: `lat:[${minLat} TO ${maxLat}] AND lon:[${minLon} TO ${maxLon}]`,
             limit: 200
         };
-        await airportDb.search('view1', 'geo', params)
+        const airportDatabase = new AirportDatabase('airportdb');
+        const result = await airportDatabase.fullSearch('view1', 'geo', params)
             .then(result => {
-
-                let airportsWithinRad = [];
-                console.log('Showing %d out of a total %d results', result.rows.length, result.total_rows);
-                for (let i = 0; i < result.rows.length; i++) {
-                    let airportField = result.rows[i].fields;
-                    let latInDb = airportField.lat;
-                    let lonInDb = airportField.lon;
-
-                    let distance = calculateGreatCircleDistance(lat, latInDb, lon, lonInDb);
-
-                    if (distance <= maxDistance)
-                        airportsWithinRad.push({airportField, distance});
-
-                }
-                console.log(airportsWithinRad.length);
-                res.send(airportsWithinRad.sort((a,b) => a.distance - b.distance));
+                console.log(`Total results: ${result.length}`);
+                return result;
             });
+
+        const airportsWithinDistance = [];
+        for (const row of result) {
+            let airportField = row.fields;
+            let latInDb = airportField.lat;
+            let lonInDb = airportField.lon;
+
+            let distance = calculateGreatCircleDistance(lat, latInDb, lon, lonInDb);
+
+            if (distance <= maxDistance)
+                airportsWithinDistance.push({airportField, distance});
+
+        }
+        console.log(`Within distance: ${airportsWithinDistance.length}`);
+        res.send(airportsWithinDistance.sort((a, b) => a.distance - b.distance));
 
     } catch (e) {
         res.status(500).json(e);
