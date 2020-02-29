@@ -12,8 +12,9 @@
   "license": "ISC",
   "dependencies": {
     "@cloudant/cloudant": "4.2.3",
-    "express": "4.17.1",
-    "ejs": "3.0.1"
+    "delay": "4.3.0",
+    "ejs": "3.0.1",
+    "express": "4.17.1"
   },
   "devDependencies": {
     "nodemon": "2.0.2"
