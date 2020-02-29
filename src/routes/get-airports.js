@@ -14,7 +14,9 @@ getAirportsRouter.post('/airports', async (req, res) => {
         const rad = parseInt(req.body.rad);
 
         const r = radiansToDegrees(rad / 6371.01);
-        const deltaLon = radiansToDegrees(Math.asin(Math.sin(r) / Math.cos(degreesToRadians(lat)))); // asin(sin(r)/cos(lat))
+        const latInDegrees = degreesToRadians(lat);
+        const deltaLon = radiansToDegrees(Math.asin(Math.sin(r) / Math.cos(latInDegrees))); // asin(sin(r)/cos(lat))
+        console.log(`deltalon: ${deltaLon}`);
 
         // bounding box in degrees
         const maxLat = lat + r;

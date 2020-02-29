@@ -1,13 +1,47 @@
+<div>
 <h1>Airport app</h1>
 <p>Do not use directions like north, south, east, and west. Instead use the decimal degree system. Use positive or negative numbers to indicate direction.</p>
+<div class="form-header" style="border: 1px solid rgba(0,0,0,.1); border-color: #e37d7d  width: 100%; max-width: 400px;">
+<% if (Object.keys(errors).length === 0) { %>
+    <h3>Send us the coordinates and radius.</h3>
+  <% } else { %>
+    <h2 class="errors-heading">Oops, please correct the following:</h2>
+    <ul class="errors-list">
+      <% Object.values(errors).forEach(error => { %>
+        <li><%= error.msg %></li>
+      <% }) %>
+    </ul>
+  <% } %>
+</div>
 
-<form action="/airports" method="post">
-    <label for="lat">Latitude:</label>
-    <input type="text" id="lat" name="lat"><br><br>
+<form action="/airports" method="post" style="border: 1px solid rgba(0,0,0,.1); border-color: #e37d7d  width: 100%; max-width: 400px;">
+<br>
+    <div class="form-field <%= errors.lat ? 'form-field-invalid' : '' %>">
+        <label for="lat">Latitude:</label>
+        <input type="text" id="lat" name="lat">
+         <% if (errors.lat) { %>
+              <div class="error"><%= errors.lat.msg %></div>
+         <% } %>
+     </div>
+    <br>
+    <div class="form-field <%= errors.lon ? 'form-field-invalid' : '' %>">
     <label for="lon">Longitute:</label>
-    <input type="text" id="lon" name="lon"><br><br>
+    <input type="text" id="lon" name="lon">
+     <% if (errors.lon) { %>
+                  <div class="error"><%= errors.lon.msg %></div>
+             <% } %>
+         </div>
+    <br>
+    <div class="form-field <%= errors.rad ? 'form-field-invalid' : '' %>">
     <label for="rad">Radius:</label>
-    <input type="text" id="rad" name="rad"><br><br>
+    <input type="text" id="rad" name="rad">
+     <% if (errors.rad) { %>
+                  <div class="error"><%= errors.rad.msg %></div>
+             <% } %>
+         </div>
+    <br>
 
     <input type="submit" value="Submit">
 </form>
+
+</div>

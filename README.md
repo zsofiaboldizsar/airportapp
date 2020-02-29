@@ -32,10 +32,14 @@ $ npm install
 $ npm start
 ```
 
+
 ```bash
 # develop
 $ npm run watch
 ```
+
+App running at:
+http://localhost:3000
 
 ## Credits
 

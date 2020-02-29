@@ -14,9 +14,13 @@
     "@cloudant/cloudant": "4.2.3",
     "delay": "4.3.0",
     "ejs": "3.0.1",
-    "express": "4.17.1"
+    "express": "4.17.1",
+    "express-flash": "0.0.2",
+    "express-validator": "6.4.0"
   },
   "devDependencies": {
+    "express-session": "^1.17.0",
+    "helmet": "3.21.3",
     "nodemon": "2.0.2"
   }
 }
