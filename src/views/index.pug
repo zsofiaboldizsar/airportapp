@@ -4,17 +4,18 @@ block content
   .container
     .alert(class="alert-danger", role="alert", id="error-group", style="display: none")
       ul(id="errors")
+
     .row
       .col-sm.col-md-8.offset-md-2.col-lg-6.offset-lg-3
         h3 Send us the coordinates and radius
         form(method='POST' action='/airports')
           .form-group
-            input.form-control(type="text", id="lat", name="lat", placeholder="Latitude in degrees")
+            input.form-control(type="text", id="lat", name="lat", placeholder="Latitude in decimal degrees")
           .form-group
-            input.form-control(type="text", id="lon", name="lon", placeholder="Longitude in degrees")
+            input.form-control(type="text", id="lon", name="lon", placeholder="Longitude in decimal degrees")
           .form-group
             input.form-control(type="text", id="rad", name="rad", placeholder="Radius in kilometers")
           .form-group
-            button.form-control(type="submit", class="btn btn-primary", id="signup-btn") Submit
+            button.form-control(type="submit", class="btn btn-primary", id="airport-btn") Submit
 
 
