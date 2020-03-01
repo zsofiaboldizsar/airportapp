@@ -13,10 +13,10 @@ getAirportsRouter.post('/airports', async (req, res) => {
         const lon = parseInt(req.body.lon);
         const rad = parseInt(req.body.rad);
 
-        const r = radiansToDegrees(rad / 6371.01);
         const latInDegrees = degreesToRadians(lat);
-        const deltaLon = radiansToDegrees(Math.asin(Math.sin(r) / Math.cos(latInDegrees))); // asin(sin(r)/cos(lat))
+        const deltaLon = radiansToDegrees(Math.asin(Math.sin(rad / 6371.01) / Math.cos(latInDegrees))); // asin(sin(r)/cos(lat))
         console.log(`deltalon: ${deltaLon}`);
+        const r = radiansToDegrees(rad / 6371.01);
 
         // bounding box in degrees
         const maxLat = lat + r;
@@ -52,8 +52,12 @@ getAirportsRouter.post('/airports', async (req, res) => {
                 airportsWithinDistance.push({airportField, distance});
 
         }
+
+        if (airportsWithinDistance.length < 1)
+            res.send(`Sorry, we couldn't find any airports for coordinates: ${lat}, ${lon} and radius: ${rad}. Change your input and try again.`);
+
         console.log(`Within distance: ${airportsWithinDistance.length}`);
-        res.send(airportsWithinDistance.sort((a, b) => a.distance - b.distance));
+        res.status(200).json(airportsWithinDistance.sort((a, b) => a.distance - b.distance));
 
     } catch (e) {
         res.status(500).json(e);
