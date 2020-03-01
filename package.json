@@ -13,9 +13,9 @@
   "dependencies": {
     "@cloudant/cloudant": "4.2.3",
     "delay": "4.3.0",
-    "ejs": "3.0.1",
     "express": "4.17.1",
-    "express-validator": "6.4.0"
+    "express-validator": "6.4.0",
+    "pug": "2.0.4"
   },
   "devDependencies": {
     "helmet": "3.21.3",

@@ -8,13 +8,12 @@ const PORT = process.env.PORT || '3000';
 const app = express();
 
 app.set('views', 'views');
-app.set('view engine', 'ejs');
+app.set('view engine', 'pug');
 
 /*-----------------------------------------
    Add middlewares
    ------------------------------------------ */
 const middlewares = [
-    helmet(),
     express.urlencoded({extended: false}),
     express.json(),
 ];
