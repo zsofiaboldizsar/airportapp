@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "watch": "nodemon app.js",
-    "test": "mocha"
+    "test": "mocha --recursive"
   },
   "author": "zsofia boldizsar<zsofia.boldizsar@hu.ibm.com>",
   "license": "ISC",

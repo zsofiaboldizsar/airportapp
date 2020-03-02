@@ -32,10 +32,9 @@ $ npm install
 $ npm start
 ```
 
-
 ```bash
-# develop
-$ npm run watch
+# run tests
+$ npm test
 ```
 
 App running at:
