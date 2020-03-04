@@ -1,12 +1,13 @@
-const Cloudant = require('@cloudant/cloudant');
 const delay = require('delay');
+
+const {getInstance} = require('../src/cloudant/get-cloudant-instance');
 
 class AirportDatabase {
     cloudant;
 
     constructor(dbName) {
         this.dbName = dbName;
-        this.cloudant = Cloudant({ url: 'https://mikerhodes.cloudant.com/'});
+        this.cloudant = getInstance();
     }
 
     async rawSearch(designDoc, index, params) {
