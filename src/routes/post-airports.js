@@ -20,7 +20,7 @@ postAirportsRouter.post('/airports', formValidationRules(), validate, async (req
             return res.status(409).json({message: 'Longitude must be a number between -180.00 and 180.00'});
 
         const latInDegrees = degreesToRadians(lat);
-        const deltaLon = radiansToDegrees(Math.asin(Math.sin(rad / 6371.01) / Math.cos(latInDegrees))); // asin(sin(r)/cos(lat))
+        const deltaLon = radiansToDegrees(Math.asin(Math.sin(rad / 6371.01) / Math.cos(latInDegrees)));
         const r = radiansToDegrees(rad / 6371.01);
 
         // bounding box in degrees
@@ -52,7 +52,10 @@ postAirportsRouter.post('/airports', formValidationRules(), validate, async (req
         }
 
         if (airportsWithinDistance.length < 1)
-            return res.status(404).json({message: `Sorry, we couldn't find any airports for coordinates: ${lat}, ${lon} and radius: ${rad}. Change your input and try again.`});
+            return res.status(404).json({
+                message: `Sorry, we couldn't find any airports for coordinates: 
+            ${lat}, ${lon} and radius: ${rad}. Change your input and try again.`
+            });
 
         return res.status(200).json(airportsWithinDistance.sort((a, b) => a.distance - b.distance));
 
