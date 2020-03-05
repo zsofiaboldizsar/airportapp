@@ -1,5 +1,5 @@
-const assert = require('chai').assert;
-const describe = require('mocha').describe;
+const {assert} = require('chai');
+const {describe} = require('mocha');
 
 const calculateGreatCircleDistance = require('../../src/geodesic-calculations/calculate-great-circle-distance');
 

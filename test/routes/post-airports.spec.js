@@ -49,7 +49,7 @@ describe('postAirportsRouter', () => {
             .end((err, res) => {
                 const result = res.body;
                 expect(airportDatabaseStub.calledOnce);
-                expect(result.message.startsWith(`Sorry, we couldn't find any`))
+                expect(result.message.startsWith(`Sorry, we couldn't find any`));
                 done();
             });
     });
