@@ -2,7 +2,7 @@ const express = require('express');
 const helmet = require('helmet');
 const path = require('path');
 
-const getAirportsRouter = require('./src/routes/get-airports');
+const getAirportsRouter = require('./src/routes/post-airports');
 const getFormRouter = require('./src/routes/get-form');
 
 const PORT = process.env.PORT || '3000';
@@ -36,4 +36,6 @@ app.listen(PORT, (error) => {
     else
         console.log(`Airport app listening on port ${PORT}!`);
 });
+
+module.exports = app;
 

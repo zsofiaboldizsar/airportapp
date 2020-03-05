@@ -6,9 +6,9 @@ const degreesToRadians = require('../geodesic-calculations/degrees-to-radians');
 const calculateGreatCircleDistance = require('../geodesic-calculations/calculate-great-circle-distance');
 const {formValidationRules, validate} = require('./validator');
 
-const getAirportsRouter = express.Router();
+const postAirportsRouter = express.Router();
 
-getAirportsRouter.post('/airports', formValidationRules(), validate, async (req, res) => {
+postAirportsRouter.post('/airports', formValidationRules(), validate, async (req, res) => {
     try {
         const lat = parseInt(req.body.lat);
         const lon = parseInt(req.body.lon);
@@ -21,7 +21,6 @@ getAirportsRouter.post('/airports', formValidationRules(), validate, async (req,
 
         const latInDegrees = degreesToRadians(lat);
         const deltaLon = radiansToDegrees(Math.asin(Math.sin(rad / 6371.01) / Math.cos(latInDegrees))); // asin(sin(r)/cos(lat))
-        console.log(`deltalon: ${deltaLon}`);
         const r = radiansToDegrees(rad / 6371.01);
 
         // bounding box in degrees
@@ -29,10 +28,8 @@ getAirportsRouter.post('/airports', formValidationRules(), validate, async (req,
         const minLat = lat - r;
         const maxLon = lon + deltaLon;
         const minLon = lon - deltaLon;
-        console.log(maxLat, minLat, maxLon, minLon);
 
         const maxDistance = calculateGreatCircleDistance(lat, maxLat, lon, maxLon);
-        console.log('max distance: ', maxDistance);
 
         // DB search
         const params = {
@@ -40,11 +37,7 @@ getAirportsRouter.post('/airports', formValidationRules(), validate, async (req,
             limit: 200
         };
         const airportDatabase = new AirportDatabase('airportdb');
-        const result = await airportDatabase.fullSearch('view1', 'geo', params)
-            .then(result => {
-                console.log(`Total results: ${result.length}`);
-                return result;
-            });
+        const result = await airportDatabase.fullSearch('view1', 'geo', params);
 
         const airportsWithinDistance = [];
         for (const row of result) {
@@ -56,20 +49,18 @@ getAirportsRouter.post('/airports', formValidationRules(), validate, async (req,
 
             if (distance <= maxDistance)
                 airportsWithinDistance.push({airportField, distance});
-
         }
 
         if (airportsWithinDistance.length < 1)
             return res.status(404).json({message: `Sorry, we couldn't find any airports for coordinates: ${lat}, ${lon} and radius: ${rad}. Change your input and try again.`});
 
-        console.log(`Within distance: ${airportsWithinDistance.length}`);
-        res.status(200).json(airportsWithinDistance.sort((a, b) => a.distance - b.distance));
+        return res.status(200).json(airportsWithinDistance.sort((a, b) => a.distance - b.distance));
 
     } catch (e) {
-        res.status(500).json(e);
+        return res.status(500).json(e);
     }
 });
 
-module.exports = getAirportsRouter;
+module.exports = postAirportsRouter;
 
 
