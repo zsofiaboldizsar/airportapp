@@ -9,7 +9,7 @@ const formValidationRules = () => {
             .isDecimal({force_decimal: false}).withMessage('Must be a number between -180.00 and 180.00').bail(),
 
         body('rad').isLength({min:1}).withMessage('Required').bail()
-            .isDecimal({force_decimal: false}).withMessage('Must be a number').bail(),
+            .isDecimal({force_decimal: false}).withMessage('Must be a number'),
     ]
 };
 
